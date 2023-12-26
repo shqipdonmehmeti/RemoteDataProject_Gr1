@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.example.remotedataproject.R
 import com.example.remotedataproject.adapter.PostAdapter
 import com.example.remotedataproject.databinding.FragmentHomeBinding
 import com.example.remotedataproject.helpers.Helpers.provideRetrofitInstance
@@ -17,7 +19,7 @@ import retrofit2.Response
 class HomeFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeBinding
-    private lateinit var listOfPosts : List<Post>
+    private lateinit var listOfPosts: List<Post>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,9 +48,9 @@ class HomeFragment : Fragment() {
         provideRetrofitInstance().getAllPosts().enqueue(object : Callback<List<Post>?> {
             override fun onResponse(call: Call<List<Post>?>, response: Response<List<Post>?>) {
                 if (response.isSuccessful && response.body() != null) {
-                        listOfPosts = response.body()!!
-                        val postAdapter = PostAdapter(requireContext(), listOfPosts)
-                        binding.lvPost.adapter = postAdapter
+                    listOfPosts = response.body()!!
+                    val postAdapter = PostAdapter(requireContext(), listOfPosts)
+                    binding.lvPost.adapter = postAdapter
 
                 } else {
                     Toast.makeText(
@@ -69,12 +71,16 @@ class HomeFragment : Fragment() {
         })
     }
 
-    private fun getOnePost(position : Int) {
+    private fun getOnePost(position: Int) {
         val currentPost = listOfPosts[position]
         provideRetrofitInstance().getOnePost(currentPost.id).enqueue(object : Callback<Post?> {
             override fun onResponse(call: Call<Post?>, response: Response<Post?>) {
                 if (response.isSuccessful && response.body() != null) {
-                    Toast.makeText(requireContext(),"${response.body()?.body}",Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), "${response.body()?.body}", Toast.LENGTH_LONG)
+                        .show()
+//                    sendData(currentPost)
+//                    val action = HomeFragmentDirections.actionNavHomeToHomeDetailsFragment()
+                    findNavController().navigate(R.id.action_nav_home_to_homeDetailsFragment,sendData(currentPost))
                 } else {
                     Toast.makeText(
                         requireContext(),
@@ -93,4 +99,16 @@ class HomeFragment : Fragment() {
             }
         })
     }
+
+    private fun sendData(post: Post): Bundle {
+        val bundle = Bundle()
+        bundle.apply {
+            putInt("id", post.id)
+            putString("title", post.title)
+            putString("body", post.body)
+        }
+
+        return bundle
+    }
+
 }
