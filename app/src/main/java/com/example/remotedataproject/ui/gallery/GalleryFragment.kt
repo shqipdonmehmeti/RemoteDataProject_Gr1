@@ -1,5 +1,6 @@
 package com.example.remotedataproject.ui.gallery
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,32 +12,27 @@ import com.example.remotedataproject.databinding.FragmentGalleryBinding
 
 class GalleryFragment : Fragment() {
 
-    private var _binding: FragmentGalleryBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
-
+    private lateinit var binding: FragmentGalleryBinding
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val galleryViewModel =
-            ViewModelProvider(this).get(GalleryViewModel::class.java)
+        binding = FragmentGalleryBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        _binding = FragmentGalleryBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        val textView: TextView = binding.textGallery
-        galleryViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.btnSaveData.setOnClickListener {
+            val sharedPrefs = requireContext()
+                .getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
+            sharedPrefs.edit().apply {
+                putString("name",binding.etName.text.toString())
+                apply() // replacement of commit() for working async
+            }
         }
-        return root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
+
 }
