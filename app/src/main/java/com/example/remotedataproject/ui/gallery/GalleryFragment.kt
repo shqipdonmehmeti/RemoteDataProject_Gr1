@@ -9,6 +9,9 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.remotedataproject.databinding.FragmentGalleryBinding
+import com.example.remotedataproject.helpers.Helpers
+import com.example.remotedataproject.helpers.Helpers.provideSharedPreferences
+import com.example.remotedataproject.helpers.Helpers.saveStringToSharedPrefs
 
 class GalleryFragment : Fragment() {
 
@@ -25,12 +28,7 @@ class GalleryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnSaveData.setOnClickListener {
-            val sharedPrefs = requireContext()
-                .getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
-            sharedPrefs.edit().apply {
-                putString("name",binding.etName.text.toString())
-                apply() // replacement of commit() for working async
-            }
+          saveStringToSharedPrefs(requireContext(),"name",binding.etName.text.toString())
         }
     }
 

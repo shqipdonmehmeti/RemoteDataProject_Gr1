@@ -7,6 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.remotedataproject.databinding.FragmentSlideshowBinding
+import com.example.remotedataproject.helpers.Helpers
+import com.example.remotedataproject.helpers.Helpers.getStringFromSharedPrefs
+import com.example.remotedataproject.helpers.Helpers.provideSharedPreferences
 
 class SlideshowFragment : Fragment() {
 
@@ -25,8 +28,7 @@ class SlideshowFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnGetData.setOnClickListener {
-            val sharedPrefs = requireContext().getSharedPreferences("shared_prefs",Context.MODE_PRIVATE)
-            val name = sharedPrefs.getString("name","")
+            val name = getStringFromSharedPrefs(requireContext(),"name")
             binding.textSlideshow.text = name
         }
     }
